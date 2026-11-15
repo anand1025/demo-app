@@ -3,37 +3,40 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout') {
-            steps {
-                echo 'Checking out source code'
-            }
-        }
-
         stage('Build') {
             steps {
-                echo 'Building the application'
+                echo 'Building application'
             }
         }
 
         stage('Test') {
             steps {
-                echo 'Testing the application'
+                echo 'Testing application'
             }
         }
 
         stage('Deploy') {
             steps {
-                echo 'Deploying the application'
+                echo 'Deploying application'
             }
         }
     }
 
     post {
         success {
-            echo 'Pipeline executed successfully'
+            emailext(
+                subject: "BUILD SUCCESS: ${env.JOB_NAME}",
+                body: "Hello,\n\nJenkins build completed successfully.\nBuild Number: ${env.BUILD_NUMBER}\nBuild URL: ${env.BUILD_URL}",
+                to: 'buildreports.anand@gmail.com'
+            )
         }
+
         failure {
-            echo 'Pipeline execution failed'
+            emailext(
+                subject: "BUILD FAILURE: ${env.JOB_NAME}",
+                body: "Hello,\n\nJenkins build has failed.\nBuild Number: ${env.BUILD_NUMBER}\nBuild URL: ${env.BUILD_URL}\nPlease check the console output.",
+                to: 'buildreports.anand@gmail.com'
+            )
         }
     }
 }
